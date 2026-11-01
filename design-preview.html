@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>校园课程智能助手 · 外观方案预览</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #0d0e13;
+    color: #e8ebf3;
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  .tabs {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 16px 28px;
+    background: rgba(13,14,19,.88);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .tab {
+    padding: 9px 16px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,.16);
+    background: transparent; color: #b9c1d4; font-size: 13.5px;
+    transition: .18s;
+  }
+  .tab:hover { color: #fff; border-color: rgba(255,255,255,.4); }
+  .tab.active { background: #fff; color: #111; border-color: #fff; font-weight: 600; }
+  .hint { margin-left: auto; font-size: 12.5px; color: #7b8398; }
+
+  .screen { display: none; padding: 26px 28px 60px; }
+  .screen.active { display: block; }
+  .frame {
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 30px 80px -40px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.06);
+  }
+  .note {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    margin: 16px 2px 8px; font-size: 13px; color: #8d95aa;
+  }
+  .note b { color: #e8ebf3; font-weight: 600; }
+  .note span { padding: 3px 10px; border-radius: 999px; background: rgba(255,255,255,.06); }
+  .sub-title { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: #6f7891; margin: 26px 0 10px 2px; }
+
+  /* ============ 共用组件 ============ */
+  .app { display: flex; min-height: 700px; font-size: 14px; }
+  .side { width: 232px; flex: none; display: flex; flex-direction: column; }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 20px 18px 16px; font-weight: 700; font-size: 14.5px; }
+  .brand-badge { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; flex: none; }
+  .brand-badge svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .nav { padding: 8px 12px; display: flex; flex-direction: column; gap: 3px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--muted); font-size: 13.5px; }
+  .nav-item svg { width: 17px; height: 17px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .nav-item.active { background: var(--active-bg); color: var(--active-text); font-weight: 600; }
+  .side-foot { margin-top: auto; padding: 14px; }
+  .side-user { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; background: var(--soft); border: 1px solid var(--line); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--avatar-bg); color: var(--avatar-fg); flex: none; }
+  .side-user .u-name { font-size: 12.5px; color: var(--text); }
+  .side-user .u-role { font-size: 11px; color: var(--muted); }
+
+  .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .top { height: 62px; flex: none; display: flex; align-items: center; justify-content: space-between; padding: 0 26px; border-bottom: 1px solid var(--line); }
+  .crumb { font-size: 13px; color: var(--muted); }
+  .crumb b { color: var(--text); font-weight: 600; }
+  .top-right { font-size: 12.5px; color: var(--muted); }
+
+  .content { padding: 24px 26px 30px; }
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+  .page-head h2 { margin: 0 0 6px; font-size: 21px; color: var(--text); }
+  .page-head p { margin: 0; font-size: 12.5px; color: var(--muted); }
+  .btn { padding: 9px 16px; border-radius: var(--btn-radius); border: 0; background: var(--accent-bg); color: var(--accent-fg); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); font-weight: 500; }
+
+  .upload { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 20px; border: 1px dashed var(--line); border-radius: var(--radius); background: var(--soft); }
+  .upload .up-main { display: flex; align-items: center; gap: 14px; }
+  .up-icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--card); border: 1px solid var(--line); flex: none; }
+  .up-icon svg { width: 20px; height: 20px; fill: none; stroke: var(--accent-fg); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .up-title { font-size: 13.5px; color: var(--text); font-weight: 600; margin-bottom: 3px; }
+  .up-sub { font-size: 12px; color: var(--muted); }
+
+  .card { margin-top: 18px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left; padding: 11px 16px; font-size: 11.5px; font-weight: 600;
+    letter-spacing: .04em; color: var(--muted); background: var(--soft);
+    border-bottom: 1px solid var(--line); white-space: nowrap;
+  }
+  tbody td { padding: 13px 16px; font-size: 13px; color: var(--text); border-bottom: 1px solid var(--line); white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: 0; }
+  .tag { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; background: var(--tag-bg); color: var(--tag-fg); }
+  .tag.off { background: var(--soft); color: var(--muted); }
+  .ops { display: flex; gap: 12px; font-size: 12.5px; color: var(--link); }
+  .ops span { cursor: pointer; }
+  .ops span.danger { color: var(--danger); }
+  .foot-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; font-size: 12px; color: var(--muted); background: var(--soft); }
+  .pager { display: flex; gap: 6px; }
+  .pager i { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 6px; border: 1px solid var(--line); font-style: normal; font-size: 11.5px; }
+  .pager i.on { background: var(--accent-bg); color: var(--accent-fg); border-color: transparent; }
+
+  .login-wrap { margin-top: 10px; display: flex; justify-content: center; padding: 34px; border-radius: 18px; }
+  .login { width: 372px; padding: 32px; border-radius: var(--radius); background: var(--card); border: 1px solid var(--line); box-shadow: var(--shadow); }
+  .login h3 { margin: 0 0 6px; font-size: 22px; color: var(--text); }
+  .login .sub { margin: 0 0 24px; font-size: 12.5px; color: var(--muted); }
+  .field { height: 42px; display: flex; align-items: center; padding: 0 14px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: var(--btn-radius); background: var(--soft); color: var(--muted); font-size: 13px; }
+  .login .btn { width: 100%; margin-top: 6px; padding: 11px 0; }
+
+  /* ============ A · 深色极光玻璃 ============ */
+  .v-a {
+    --card: rgba(255,255,255,.075);
+    --soft: rgba(255,255,255,.045);
+    --line: rgba(255,255,255,.13);
+    --text: #eef2ff;
+    --muted: #9aa7c7;
+    --accent-bg: linear-gradient(135deg,#6366f1,#22d3ee);
+    --accent-fg: #08101f;
+    --radius: 16px;
+    --btn-radius: 12px;
+    --shadow: 0 24px 50px -28px rgba(0,0,0,.85);
+    --tag-bg: rgba(34,211,238,.15);
+    --tag-fg: #8be9f7;
+    --link: #8ab4ff;
+    --danger: #ff8a9b;
+    --active-bg: rgba(99,102,241,.26);
+    --active-text: #ffffff;
+    --avatar-bg: linear-gradient(135deg,#6366f1,#22d3ee);
+    --avatar-fg: #08101f;
+  }
+  .v-a.app {
+    padding: 16px; gap: 16px;
+    background:
+      radial-gradient(70% 60% at 10% 6%, rgba(99,102,241,.48), transparent 62%),
+      radial-gradient(55% 45% at 92% 12%, rgba(34,211,238,.26), transparent 62%),
+      radial-gradient(60% 50% at 60% 100%, rgba(168,85,247,.18), transparent 60%),
+      #0b1020;
+  }
+  .v-a .side {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px;
+    backdrop-filter: blur(18px);
+  }
+  .v-a .brand-badge { background: linear-gradient(135deg,#6366f1,#22d3ee); color: #08101f; }
+  .v-a .main {
+    background: rgba(255,255,255,.045);
+    border: 1px solid rgba(255,255,255,.11);
+    border-radius: 20px;
+    backdrop-filter: blur(18px);
+    overflow: hidden;
+  }
+  .v-a .card { background: rgba(255,255,255,.055); }
+  .v-a thead th { background: rgba(255,255,255,.05); }
+  .v-a .upload { border-color: rgba(139,233,247,.35); }
+  .v-a .up-icon { background: rgba(34,211,238,.14); }
+  .v-a .up-icon svg { stroke: #8be9f7; }
+  .v-a .login-wrap {
+    background:
+      radial-gradient(60% 60% at 50% 0%, rgba(99,102,241,.35), transparent 65%),
+      radial-gradient(50% 50% at 80% 100%, rgba(34,211,238,.18), transparent 60%),
+      #0b1020;
+  }
+  .v-a .login { background: rgba(255,255,255,.07); backdrop-filter: blur(18px); }
+
+  /* ============ B · 学院纸感 ============ */
+  .v-b {
+    --card: #fffdf8;
+    --soft: #f7f2e6;
+    --line: #e4dcc9;
+    --text: #23302b;
+    --muted: #7a8479;
+    --accent-bg: #b3422f;
+    --accent-fg: #fff8f2;
+    --radius: 10px;
+    --btn-radius: 7px;
+    --shadow: 0 1px 2px rgba(35,42,33,.05), 0 18px 40px -30px rgba(35,42,33,.5);
+    --tag-bg: #e7efe5;
+    --tag-fg: #2f6b4f;
+    --link: #1f3d34;
+    --danger: #a63b2c;
+    --active-bg: #f2efe3;
+    --active-text: #1f3d34;
+    --avatar-bg: #1f3d34;
+    --avatar-fg: #f2efe3;
+  }
+  .v-b.app { background: #f4f0e5; }
+  .v-b .side { background: #1f3d34; border-right: 1px solid #172f28; }
+  .v-b .brand { color: #f4f0e5; }
+  .v-b .brand-badge { background: #f2efe3; color: #1f3d34; }
+  .v-b .nav-item { color: rgba(242,239,227,.68); }
+  .v-b .side-foot .side-user { background: rgba(255,255,255,.07); border-color: rgba(242,239,227,.14); }
+  .v-b .side-user .u-name { color: #f2efe3; }
+  .v-b .side-user .u-role { color: rgba(242,239,227,.55); }
+  .v-b .brand-name,
+  .v-b .page-head h2,
+  .v-b .login h3 { font-family: "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif; }
+  .v-b .page-head h2 { font-size: 23px; letter-spacing: .04em; }
+  .v-b .main { background: #f4f0e5; }
+  .v-b thead th { background: #fffdf8; border-bottom: 2px solid #23302b; color: #23302b; }
+  .v-b .up-icon { background: #fffdf8; }
+  .v-b .up-icon svg { stroke: #b3422f; }
+  .v-b .login-wrap { background: #f4f0e5; }
+
+  /* ============ C · 霓虹粗野 ============ */
+  .v-c {
+    --card: #ffffff;
+    --soft: #fffbe8;
+    --line: #111111;
+    --text: #111111;
+    --muted: #5a5a52;
+    --accent-bg: #ffd43b;
+    --accent-fg: #111111;
+    --radius: 6px;
+    --btn-radius: 4px;
+    --shadow: 7px 7px 0 #111111;
+    --tag-bg: #c9f0ff;
+    --tag-fg: #0b4f6c;
+    --link: #111111;
+    --danger: #ff5c5c;
+    --active-bg: #ffd43b;
+    --active-text: #111111;
+    --avatar-bg: #ff5c5c;
+    --avatar-fg: #ffffff;
+  }
+  .v-c.app { background: #f2f1ea; }
+  .v-c .side { background: #111111; border-right: 3px solid #111; }
+  .v-c .brand { color: #ffffff; }
+  .v-c .brand-badge { background: #ffd43b; color: #111111; border-radius: 4px; }
+  .v-c .nav-item { border-radius: 4px; color: rgba(255,255,255,.66); }
+  .v-c .nav-item.active { border: 2px solid #111111; }
+  .v-c .side-foot .side-user { background: #1c1c1c; border-color: #333333; }
+  .v-c .side-user .u-name { color: #ffffff; }
+  .v-c .side-user .u-role { color: rgba(255,255,255,.5); }
+  .v-c .top { border-bottom: 3px solid #111111; background: #ffffff; }
+  .v-c .content { background: #f2f1ea; }
+  .v-c .page-head h2 { font-size: 23px; text-transform: uppercase; }
+  .v-c .card { border-width: 2px; }
+  .v-c .upload { border: 2px dashed #111111; background: #fffbe8; }
+  .v-c .up-icon { border: 2px solid #111111; border-radius: 4px; box-shadow: 3px 3px 0 #111111; background: #ffffff; }
+  .v-c .up-icon svg { stroke: #111111; }
+  .v-c .btn { border: 2px solid #111111; box-shadow: 3px 3px 0 #111111; }
+  .v-c .btn.ghost { box-shadow: none; background: #ffffff; }
+  .v-c thead th { background: #ffd43b; text-transform: uppercase; letter-spacing: .08em; border-bottom: 2px solid #111111; color: #111111; }
+  .v-c .pager i { border-radius: 3px; border: 2px solid #111111; }
+  .v-c .login-wrap { background: repeating-linear-gradient(45deg,#f2f1ea 0 12px,#e9e7dc 12px 24px); }
+  .v-c .login { border: 2px solid #111111; box-shadow: 10px 10px 0 #111111; }
+  .v-c .login .btn { box-shadow: 3px 3px 0 #111111; }
+  .v-c .field { border: 2px solid #111111; background: #ffffff; }
+  .v-c .tag { border-radius: 3px; font-weight: 600; }
+  .v-c .ops span { text-decoration: underline; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <button class="tab active" data-target="screen-a">A · 深色极光玻璃</button>
+  <button class="tab" data-target="screen-b">B · 学院纸感</button>
+  <button class="tab" data-target="screen-c">C · 霓虹粗野</button>
+  <span class="hint">三套风格逻辑完全相同，只换外观</span>
+</div>
+
+<section class="screen active" id="screen-a"></section>
+<section class="screen" id="screen-b"></section>
+<section class="screen" id="screen-c"></section>
+
+<script>
+  const ICONS = {
+    home: '<svg viewBox="0 0 24 24"><path d="M3.5 10.6 12 3.8l8.5 6.8V20a1 1 0 0 1-1 1H4.5a1 1 0 0 1-1-1z"/><path d="M9.5 21v-6h5v6"/></svg>',
+    chat: '<svg viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L4 20z"/><path d="M8 10h8M8 12.8h5"/></svg>',
+    calendar: '<svg viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="15" rx="1.6"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4"/></svg>',
+    plan: '<svg viewBox="0 0 24 24"><path d="M6 3.5h12v17L12 16.6 6 20.5z"/><path d="M9 8h6M9 11h6"/></svg>',
+    book: '<svg viewBox="0 0 24 24"><path d="M5 4.5h9a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3z"/><path d="M9 9h5M9 12.5h5"/></svg>',
+    doc: '<svg viewBox="0 0 24 24"><path d="M6.5 3h7l4 4v14h-11z"/><path d="M13.5 3v4.5h4"/><path d="M9.5 13h5M9.5 16.5h5"/></svg>',
+    users: '<svg viewBox="0 0 24 24"><circle cx="9.5" cy="8.5" r="3.2"/><path d="M3.5 19.5c0-3 2.6-5 6-5s6 2 6 5"/><circle cx="17.5" cy="9.5" r="2.4"/><path d="M16 14.8c2.7.2 4.5 2 4.5 4.7"/></svg>',
+    user: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c0-4 3.4-6 7.5-6s7.5 2 7.5 6"/></svg>',
+    upload: '<svg viewBox="0 0 24 24"><path d="M12 16V5.5M7.8 9.2 12 5l4.2 4.2"/><path d="M4.5 15v3.5a1.5 1.5 0 0 0 1.5 1.5h12a1.5 1.5 0 0 0 1.5-1.5V15"/></svg>'
+  }
+
+  const MENU = [
+    ['home', '首页'], ['chat', '课程助手'], ['calendar', '我的课表'], ['plan', '学习计划'],
+    ['book', '课程管理'], ['doc', '文档管理', true], ['users', '用户管理'], ['user', '个人信息']
+  ]
+
+  const ROWS = [
+    ['数据结构课程说明.txt', '0.4 KiB', '.txt', true, '2026-10-31 09:12'],
+    ['数据结构复习资料-入库演示.md', '2.1 KiB', '.md', true, '2026-10-31 09:20'],
+    ['数据库原理复习提纲.pdf', '1.2 MiB', '.pdf', true, '2026-10-30 16:44'],
+    ['智能系统实验评分细则.docx', '86 KiB', '.docx', false, '2026-10-30 15:02']
+  ]
+
+  function appHTML(v) {
+    const menu = MENU.map(([icon, label, active]) =>
+      '<div class="nav-item' + (active ? ' active' : '') + '">' + ICONS[icon] + '<span>' + label + '</span></div>'
+    ).join('')
+
+    const rows = ROWS.map(([name, size, ext, ok, time]) =>
+      '<tr><td>' + name + '</td><td>' + size + '</td><td>' + ext + '</td>' +
+      '<td><span class="tag' + (ok ? '' : ' off') + '">' + (ok ? '已入库' : '未入库') + '</span></td>' +
+      '<td>' + time + '</td>' +
+      '<td><div class="ops"><span>预览</span><span>重新入库</span><span class="danger">删除</span></div></td></tr>'
+    ).join('')
+
+    return `
+    <div class="app ${v}">
+      <aside class="side">
+        <div class="brand"><div class="brand-badge">${ICONS.calendar}</div><span class="brand-name">校园课程智能助手</span></div>
+        <nav class="nav">${menu}</nav>
+        <div class="side-foot"><div class="side-user"><div class="avatar">王</div><div><div class="u-name">王老师</div><div class="u-role">管理员</div></div></div></div>
+      </aside>
+      <div class="main">
+        <header class="top"><div class="crumb">管理中心 / <b>文档管理</b></div><div class="top-right">2026-10-31</div></header>
+        <div class="content">
+          <div class="page-head">
+            <div><h2>文档管理</h2><p>管理员上传课程资料，入库后课程助手即可检索这些内容。</p></div>
+            <button class="btn ghost">刷新列表</button>
+          </div>
+          <div class="upload">
+            <div class="up-main">
+              <div class="up-icon">${ICONS.upload}</div>
+              <div><div class="up-title">拖拽文件到此处，或点击选择</div><div class="up-sub">支持 .txt / .md / .pdf / .docx，单个文件不超过 100 MiB</div></div>
+            </div>
+            <button class="btn">上传并入库</button>
+          </div>
+          <div class="card">
+            <table>
+              <thead><tr><th>名称</th><th>大小</th><th>类型</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+            <div class="foot-row"><span>共 4 条资料 · 每页 10 条</span><div class="pager"><i>&lt;</i><i class="on">1</i><i>&gt;</i></div></div>
+          </div>
+        </div>
+      </div>
+    </div>`
+  }
+
+  function loginHTML(v) {
+    return `
+    <div class="login-wrap ${v}">
+      <div class="login">
+        <h3>校园课程智能助手</h3>
+        <p class="sub">查课表、问资料、存计划</p>
+        <div class="field">请输入账号</div>
+        <div class="field">请输入密码</div>
+        <button class="btn">登 录</button>
+      </div>
+    </div>`
+  }
+
+  const VARIANTS = {
+    'screen-a': { cls: 'v-a', title: 'A · 深色极光玻璃', desc: '深色底 + 紫青渐变光晕 + 毛玻璃卡片，科技感强，适合演示和大屏。',
+      tags: ['科技感', '毛玻璃', '深色', '紫色渐变'] },
+    'screen-b': { cls: 'v-b', title: 'B · 学院纸感', desc: '米白纸底、墨绿侧栏、砖红按钮，标题用衬线字，偏学院/官方气质。',
+      tags: ['学院风', '衬线标题', '米白 + 墨绿', '沉稳'] },
+    'screen-c': { cls: 'v-c', title: 'C · 霓虹粗野', desc: '黑白硬边 + 厚描边 + 硬阴影 + 亮黄点缀，个性强、辨识度高。',
+      tags: ['Neo-brutalism', '高对比', '硬阴影', '年轻'] }
+  }
+
+  for (const [id, cfg] of Object.entries(VARIANTS)) {
+    const el = document.getElementById(id)
+    el.innerHTML = `
+      <div class="frame">${appHTML(cfg.cls)}</div>
+      <div class="note"><b>${cfg.title}</b>${cfg.tags.map(t => '<span>' + t + '</span>').join('')}<span style="background:none;padding-left:0">${cfg.desc}</span></div>
+      <p class="sub-title">登录页</p>
+      ${loginHTML(cfg.cls)}`
+  }
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'))
+      tab.classList.add('active')
+      document.getElementById(tab.dataset.target).classList.add('active')
+      window.scrollTo({ top: 0 })
+    })
+  })
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+/* 学院纸感主题：只覆盖外观，不影响业务逻辑 */
+:root {
+  --paper: #f4f0e5;
+  --paper-card: #fffdf8;
+  --paper-soft: #f7f2e6;
+  --paper-line: #e4dcc9;
+  --ink: #23302b;
+  --ink-muted: #7a8479;
+  --forest: #1f3d34;
+  --brick: #b3422f;
+
+  --el-color-primary: #b3422f;
+  --el-color-primary-light-3: #c96a5a;
+  --el-color-primary-light-5: #dc9d92;
+  --el-color-primary-light-7: #ecd6d0;
+  --el-color-primary-light-8: #f4e7e3;
+  --el-color-primary-light-9: #faf2ef;
+  --el-color-primary-dark-2: #8e3524;
+
+  --el-bg-color: #fffdf8;
+  --el-bg-color-page: #f4f0e5;
+  --el-bg-color-overlay: #fffdf8;
+  --el-text-color-primary: #23302b;
+  --el-text-color-regular: #4a5750;
+  --el-text-color-secondary: #7a8479;
+  --el-text-color-placeholder: #a8ad9f;
+  --el-border-color: #e4dcc9;
+  --el-border-color-light: #ece5d4;
+  --el-border-color-lighter: #f0eadd;
+  --el-border-color-extra-light: #f5f0e5;
+  --el-fill-color: #f7f2e6;
+  --el-fill-color-light: #faf6ec;
+  --el-fill-color-lighter: #fcf9f2;
+  --el-fill-color-blank: #fffdf8;
+  --el-border-radius-base: 7px;
+  --el-border-radius-small: 6px;
+  --el-box-shadow-light: 0 1px 2px rgba(35, 42, 33, 0.05), 0 14px 30px -24px rgba(35, 42, 33, 0.55);
+  --el-font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+/* 卡片统一为暖白纸面 */
+.el-card {
+  --el-card-bg-color: var(--paper-card);
+  border-color: var(--paper-line);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(35, 42, 33, 0.05), 0 18px 40px -32px rgba(35, 42, 33, 0.6) !important;
+}
+
+.el-card__header {
+  border-bottom: 1px solid var(--paper-line);
+  padding: 16px 20px;
+}
+
+/* 表格 */
+.el-table {
+  --el-table-border-color: var(--paper-line);
+  --el-table-header-bg-color: var(--paper-soft);
+  --el-table-row-hover-bg-color: #faf6ec;
+}
+
+/* 输入框、弹窗、分页等细节 */
+.el-input__wrapper.is-focus {
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset;
+}
+
+.el-dialog {
+  border-radius: 12px;
+}
+
+.el-upload-dragger {
+  background-color: var(--paper-soft);
+  border-color: var(--paper-line);
+}
+
+/* 页面大标题用衬线字，更接近学院气质 */
+.serif-title {
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif;
+}
+
+/* 统一页面排版：标题区 + 卡片内容区 */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+.page-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 2px 2px 0;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--forest);
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif;
+}
+
+.page-sub {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.page-card {
+  border-radius: 12px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.toolbar .grow {
+  flex: 1;
+}
+
+.pager-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.el-card__header {
+  font-family: "Noto Serif SC", "Songti SC", "SimSun", Georgia, serif;
+  font-size: 17px;
+  color: var(--forest);
+}

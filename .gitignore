@@ -1,0 +1,42 @@
+# ===== 环境变量与密钥（真实密钥只放在本地） =====
+backend/.env
+.env
+.env.local
+.env.*.local
+!backend/.env.example
+
+# ===== Python =====
+backend/.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# ===== Node =====
+node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/.vite/
+coverage/
+
+# ===== 运行数据与上传文件 =====
+backend/uploads/
+backend/data/
+logs/
+*.log
+
+# ===== 本地截图 =====
+.screenshots/
+
+# ===== 编辑器与系统 =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ===== 证书与私钥 =====
+*.pem
+*.key
+*.p12
+*.pfx
